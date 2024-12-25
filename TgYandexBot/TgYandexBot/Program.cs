@@ -10,6 +10,7 @@ public static class Program
     {
         var services = new ServiceCollection()
             .UseHandlers()
+            .UseCommandHandlers()
             .UseTelegramService(BuildConfiguration())
             .BuildServiceProvider();
 
