@@ -39,7 +39,7 @@ public class TelegramBotService : ITelegramBotService
             errorHandler.HandleErrorAsync,
             receiverOptions, cancellationToken.Token);
         
-        var me = await client.GetMeAsync();
+        var me = await client.GetMe();
         Console.WriteLine($"Start listening for @{me.Username}");
     }
 
