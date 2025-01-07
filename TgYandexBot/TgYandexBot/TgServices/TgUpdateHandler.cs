@@ -21,11 +21,19 @@ public class TgUpdateHandler : ITgUpdateHandler
             return;
         
         var message = update.Message;
+        var command = string.Empty;
+
+        switch (message.Type)
+        {
+            case MessageType.Text:
+                command = message.EntityValues.First();
+                break;
+            case MessageType.Document:
+                command = message.Caption;
+                break;
+        }
         
-        if (message?.Text == null)
-            return;
-        
-        var commandHandler = commandProvider.GetCommandHandler(message.Text);
+        var commandHandler = commandProvider.GetCommandHandler(command);
         
         if (commandHandler.HaveValue)
             await commandHandler.Value.HandleCommand(client, update);

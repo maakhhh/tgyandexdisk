@@ -27,6 +27,8 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddSingleton<ICommandHandler, StartCommandHandler>()
+            .AddSingleton<ICommandHandler, UploadCommandHandler>()
+            .AddSingleton<ICommandHandler, DownloadCommandHandler>()
             .AddSingleton<CommandHandlerProvider>();
     }
 }
