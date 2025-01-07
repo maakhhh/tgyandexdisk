@@ -10,6 +10,14 @@ public class StartCommandHandler : ICommandHandler
 
     public async Task HandleCommand(ITelegramBotClient client, Update update)
     {
-        await client.SendMessage(update.Message!.Chat.Id, "Привет! Это стартовое сообщение, я пока в разработке.");
+        var msg = update.Message;
+        var splitted = msg.Text.Split();
+        if (splitted.Length < 2 ) //Проверка на диплинки
+            await client.SendMessage(update.Message!.Chat.Id, "Привет! Это стартовое сообщение, я пока в разработке.");
+        else
+        {
+            var someTextFromYandex = splitted[1]; //Это инфа с диплинка, так можно будет с Yandex OAuth вытаскивать инфу
+            await client.SendMessage(msg.Chat.Id, someTextFromYandex);
+        }
     }
 }
