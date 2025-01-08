@@ -8,36 +8,17 @@ public interface IYandexDiskService
     /// <summary>
     /// Загрузить файл
     /// </summary>
-    /// <param name="filepath">Путь к файлу</param>
-    /// <param name="filestream">Поток данных файла, который будет загружен</param>
+    /// <param name="localPath">Путь к загруженному файлу</param>
+    /// <param name="remotePath">Путь в которой загружается файл</param>
+    /// <param name="userId">Id пользователя</param>
     /// <returns></returns>
-    Task UploadFileAsync(string filepath, Stream filestream);
+    Task UploadFileAsync(string localPath, string remotePath, int userId);
 
     /// <summary>
     /// Скачивает файл с Яндекс.Диска
     /// </summary>
     /// <param name="filePath">Путь к файлу</param>
+    /// <param name="userId">Id пользователя</param>
     /// <returns></returns>
-    Task<Stream> DownloadFileAsync(string filePath);
-
-    /// <summary>
-    /// Удаляет файл с Яндекс.Диска
-    /// </summary>
-    /// <param name="filepath">Путь к файлу</param>
-    /// <returns></returns>
-    Task DeleteFileAsync(string filepath);
-
-    /// <summary>
-    /// Возвращает список файлов в указанной папке
-    /// </summary>
-    /// <param name="folderPath">Путь к папке</param>
-    /// <returns>Коллекция названий файлов в указанной папке</returns>
-    Task<IEnumerable<string>> FileListAsync(string folderPath);
-    
-    /// <summary>
-    /// Проверяет, существует ли файл
-    /// </summary>
-    /// <param name="filepath">Путь к файлу</param>
-    /// <returns>(true/false) Существует ли файл</returns>
-    Task<bool> FileExistsAsync(string filepath);
+    Task<Stream> DownloadFileAsync(string filePath, int userId);
 }

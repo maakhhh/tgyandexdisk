@@ -23,6 +23,12 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ITelegramBotService, TelegramBotService>();
     }
 
+    public static IServiceCollection UseYandexService(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IYandexDiskService, YandexDiskService>();
+    }
+
     public static IServiceCollection UseCommandHandlers(this IServiceCollection services)
     {
         return services

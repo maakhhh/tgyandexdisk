@@ -12,6 +12,7 @@ public static class Program
             .UseHandlers()
             .UseCommandHandlers()
             .UseTelegramService(BuildConfiguration())
+            .UseYandexService()
             .BuildServiceProvider();
 
         var client = services.GetRequiredService<ITelegramBotService>();
