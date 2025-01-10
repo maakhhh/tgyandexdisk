@@ -15,7 +15,7 @@ namespace TgYandexBot.DataBase
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseNpgsql("Connection String");
+			optionsBuilder.UseNpgsql("Host=localhost;Port=54322;Username=postgres;Password=postgres;Database=TgYandex");
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

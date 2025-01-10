@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TgYandexBot.Core\TgYandexBot.Core.csproj" />
+    <ProjectReference Include="..\TgYandexBot.DataBase\TgYandexBot.DataBase.csproj" />
   </ItemGroup>
 
 </Project>

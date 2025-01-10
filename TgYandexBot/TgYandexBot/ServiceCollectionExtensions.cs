@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TgYandexBot.CommandHandlers;
 using TgYandexBot.Core.Interfaces;
 using TgYandexBot.TgServices;
+using TgYandexBot.DataBase.Repositories;
+using TgYandexBot.DataBase;
 
 namespace TgYandexBot;
 
@@ -36,5 +38,12 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommandHandler, UploadCommandHandler>()
             .AddSingleton<ICommandHandler, DownloadCommandHandler>()
             .AddSingleton<CommandHandlerProvider>();
+    }
+
+    public static IServiceCollection UseRepositories(this IServiceCollection services) 
+    {
+        return services
+            .AddSingleton<TgBotDbContext>()
+            .AddScoped<IUserRepository, UserRepository>();
     }
 }

@@ -27,13 +27,15 @@ namespace TgYandexBot.CommandHandlers
                 Directory.CreateDirectory(dir);
 
             var tempDestination = $"{dir}/{doc.FileName}";
-            await using Stream fs = System.IO.File.Create(tempDestination);
+            await using FileStream fs = System.IO.File.Create(tempDestination);
+            var localPath = fs.Name;
             if (filePath != null) await client.DownloadFile(filePath, fs);
+            fs.Close();
 
-            var currentDir = string.Empty;
-            await using Stream stream = System.IO.File.OpenRead(tempDestination);
-            await yandexDiskService.UploadFileAsync(currentDir, stream.ToString(), (int)msg.From.Id);
-            Directory.Delete(tempDestination);
+            var currentDir = $"/{doc.FileName}";
+            await yandexDiskService.UploadFileAsync(localPath, currentDir, (int)msg.From.Id);
+
+            System.IO.File.Delete(tempDestination);
             //Яндекс
         }
     }

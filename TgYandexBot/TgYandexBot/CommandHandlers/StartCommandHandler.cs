@@ -22,18 +22,24 @@ public class StartCommandHandler : ICommandHandler
         var splitted = msg.Text.Split(" ");
         if (splitted.Length < 2)
         {
-            var clientId = "d865d50859174d828f62e1844f2bc69e";
-            var authUrl = $"https://oauth.yandex.ru/authorize?response_type=token&client_id={clientId}";
+            var clientId = "50e3d2c5f9e74287828351381e04fec7";
+            var authUrl = $"https://oauth.yandex.ru/authorize?response_type=code&client_id={clientId}";
 
             await client.SendTextMessageAsync(msg.Chat.Id,
                 $"Для работы с ботом авторизуйтесь через Яндекс: [Авторизоваться]({authUrl})");
         }
         else
         {
-            var authToken = ExtractAccessToken(splitted[1]); // auth_token из диплинка
+            string authToken;
+            try
+            {
+                authToken = ExtractAccessToken(splitted[1]); // auth_token из диплинка
+            }
+            catch (Exception ex) { }
             
             await client.SendTextMessageAsync(msg.Chat.Id,
                 $"Токен успешно сохранён! Теперь вы можете пользоваться ботом.");
+            await client.SendMessage(msg.Chat.Id, splitted[1]);
         }
     }
 

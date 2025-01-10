@@ -7,7 +7,7 @@ namespace TgYandexBot.CommandHandlers
     public class DownloadCommandHandler(IYandexDiskService yandexDiskService) : ICommandHandler
     {
 
-         public string GetCommandName() => "/download";
+        public string GetCommandName() => "/download";
 
         public async Task HandleCommand(ITelegramBotClient client, Update update)
         {
