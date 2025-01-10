@@ -1,4 +1,6 @@
-﻿using Telegram.Bot;
+﻿using System.Text;
+using System.Text.Json;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using TgYandexBot.Core.Interfaces;
 using User = TgYandexBot.Core.Models.User;
@@ -22,28 +24,13 @@ public class StartCommandHandler : ICommandHandler
         var splitted = msg.Text.Split(" ");
         if (splitted.Length < 2)
         {
-            var clientId = "d865d50859174d828f62e1844f2bc69e";
-            var authUrl = $"https://oauth.yandex.ru/authorize?response_type=token&client_id={clientId}";
+            var clientId = "тут клиент_id";
+            var authUrl = $"https://oauth.yandex.ru/authorize?response_type=code&client_id={clientId}";
 
             await client.SendTextMessageAsync(msg.Chat.Id,
-                $"Для работы с ботом авторизуйтесь через Яндекс: [Авторизоваться]({authUrl})");
-        }
-        else
-        {
-            var authToken = ExtractAccessToken(splitted[1]); // auth_token из диплинка
-            
-            await client.SendTextMessageAsync(msg.Chat.Id,
-                $"Токен успешно сохранён! Теперь вы можете пользоваться ботом.");
+                $"Для работы с ботом авторизуйтесь через Яндекс: {authUrl} " +
+                $"После чего введите команду /login и код подтверждения через пробел");
         }
     }
-
-    public static string ExtractAccessToken(string url)
-    {
-        var uri = new Uri(url);
-        var fragment = uri.Fragment;
-        var queryParams = fragment.TrimStart('#').Split('&');
-        var tokenParam = queryParams.FirstOrDefault(p => p.StartsWith("access_token="));
-        return tokenParam?.Split('=')[1];
-    }
-
+    
 }

@@ -13,8 +13,8 @@ public static class Program
             .UseCommandHandlers()
             .UseTelegramService(BuildConfiguration())
             .UseYandexService()
+            .UseRepositories()
             .BuildServiceProvider();
-
         var client = services.GetRequiredService<ITelegramBotService>();
         
         await client.StartReceivingAsync();

@@ -13,9 +13,8 @@ namespace TgYandexBot.CommandHandlers
         {
             var msg = update.Message;
             var fileName = msg.Text.Split()[1];
-
-            var currentDir = string.Empty;
-            await using Stream stream = await yandexDiskService.DownloadFileAsync($"{currentDir}/{fileName}", (int)msg.From.Id);
+            
+            await using Stream stream = await yandexDiskService.DownloadFileAsync($"{fileName}", (int)msg.From.Id);
 
             var botMsg = await client.SendDocument(msg.Chat.Id, InputFile.FromStream(stream), "Вот ваш файл:");
         }

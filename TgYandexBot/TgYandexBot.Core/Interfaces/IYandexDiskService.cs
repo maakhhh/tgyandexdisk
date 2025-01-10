@@ -21,4 +21,6 @@ public interface IYandexDiskService
     /// <param name="userId">Id пользователя</param>
     /// <returns></returns>
     Task<Stream> DownloadFileAsync(string filePath, int userId);
+
+    public Task<string> GetAllFilesAsync(int userId);
 }
