@@ -4,16 +4,8 @@ using TgYandexBot.Core.Interfaces;
 
 namespace TgYandexBot.CommandHandlers
 {
-    public class UploadCommandHandler : ICommandHandler
+    public class UploadCommandHandler(IYandexDiskService yandexDiskService) : ICommandHandler
     {
-        //private IYandexDiskService _yandexDiskService;
-
-        //public UploadCommandHandler(IYandexDiskService yandexDiskService)
-        //{
-        //    _yandexDiskService = yandexDiskService;
-        //}
-        //Яндекс
-
         public string GetCommandName() => "/upload";
 
         public async Task HandleCommand(ITelegramBotClient client, Update update)
@@ -24,6 +16,7 @@ namespace TgYandexBot.CommandHandlers
             {
                 return;
             }
+
             var dir = $"temp/{msg.From.Id.ToString()}";
 
             var fileId = doc.FileId;
@@ -34,14 +27,15 @@ namespace TgYandexBot.CommandHandlers
                 Directory.CreateDirectory(dir);
 
             var tempDestination = $"{dir}/{doc.FileName}";
-            await using Stream fs = System.IO.File.Create(tempDestination);
-            await client.DownloadFile(filePath, fs);
+            await using FileStream fs = System.IO.File.Create(tempDestination);
+            var localPath = fs.Name;
+            if (filePath != null) await client.DownloadFile(filePath, fs);
+            fs.Close();
 
-            //var currentDir = string.Empty;
-            //await using Stream stream = System.IO.File.OpenRead(tempDestination);
-            //await _yandexDiskService.UploadFileAsync(currentDir, stream);
+            var currentDir = $"/{doc.FileName}";
+            await yandexDiskService.UploadFileAsync(localPath, currentDir, (int)msg.From.Id);
 
-            //Directory.Delete(tempDestination);
+            System.IO.File.Delete(tempDestination);
             //Яндекс
         }
     }
