@@ -1,74 +1,72 @@
-﻿using System.Text;
-using System.Text.Json;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using TgYandexBot.Core.Interfaces;
 using User = TgYandexBot.Core.Models.User;
 
 namespace TgYandexBot.CommandHandlers;
 
-public class LoginCommandHandler : ICommandHandler
+public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskService yandexDiskService)
+    : ICommandHandler
 {
-    private IUserRepository _userRepository;
-
-    public LoginCommandHandler(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     public string GetCommandName() => "/login";
 
     public async Task HandleCommand(ITelegramBotClient client, Update update)
     {
-        var message = update.Message;
-        if (message == null || string.IsNullOrWhiteSpace(message.Text))
+        if (!IsValidMessage(update, out var message))
         {
-            await client.SendTextMessageAsync(update.Message!.Chat.Id, "Некорректная команда.");
+            await SendInvalidCommandMessage(client, update.Message!.Chat.Id);
             return;
         }
 
-        var splitted = message.Text.Split(" ");
-        if (splitted.Length == 2)
+        var split = message.Text.Split(" ");
+        if (split.Length == 2)
         {
-            var code = splitted[1];
-            var authToken = await ExchangeCodeForTokenAsync(code);
-            var user = new User((int)message.From.Id);
-            user.SetAccessToken(authToken);
-            await _userRepository.Add(user);
-            await client.SendTextMessageAsync(message.Chat.Id,
-                $"Токен успешно сохранён! Теперь вы можете пользоваться ботом. {authToken}");
+            await ProcessLogin(client, message, split[1]);
+        }
+        else
+        {
+            await SendInvalidCommandMessage(client, message.Chat.Id);
         }
     }
-    
-    private async Task<string> ExchangeCodeForTokenAsync(string code)
+
+    private bool IsValidMessage(Update update, out Message message)
     {
-        const string url = "https://oauth.yandex.ru/token";
-        const string clientId = "тут клиент айди";
-        const string clientSecret = "тут сикрет клиент";
+        message = update.Message!;
+        return !string.IsNullOrWhiteSpace(message.Text);
+    }
 
-        using var httpClient = new HttpClient();
-        
-        var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
-        httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {credentials}");
-        
-        var requestBody = new FormUrlEncodedContent(new[]
+    private async Task SendInvalidCommandMessage(ITelegramBotClient client, long chatId)
+    {
+        const string invalidCommandText = "Некорректная команда.";
+        await client.SendTextMessageAsync(chatId, invalidCommandText);
+    }
+
+    private async Task ProcessLogin(ITelegramBotClient client, Message message, string code)
+    {
+        var authToken = await yandexDiskService.ExchangeCodeForTokenAsync(code);
+
+        if (authToken is null)
         {
-            new KeyValuePair<string, string>("grant_type", "authorization_code"),
-            new KeyValuePair<string, string>("code", code),
-            new KeyValuePair<string, string>("client_id", clientId),
-            new KeyValuePair<string, string>("client_secret", clientSecret)
-        });
-
-        var response = await httpClient.PostAsync(url, requestBody);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return string.Empty;
+            await client.SendTextMessageAsync(message.Chat.Id,
+                "Не удалось получить токен. Проверьте правильность кода подтверждения.");
+            return;
         }
 
-        var responseContent = await response.Content.ReadAsStringAsync();
-        
-        using var jsonDoc = JsonDocument.Parse(responseContent);
-        return jsonDoc.RootElement.GetProperty("access_token").GetString() ?? string.Empty;
+        var existingUser = await userRepository.GetById((int)message.From.Id);
+
+        if (!existingUser.IsFailure)
+        {
+            await client.SendTextMessageAsync(message.Chat.Id,
+                "Ваш токен уже присутствует в системе, вы можете пользоваться ботом.");
+        }
+        else
+        {
+            var newUser = new User((int)message.From.Id);
+            newUser.SetAccessToken(authToken);
+            await userRepository.Add(newUser);
+
+            await client.SendTextMessageAsync(message.Chat.Id,
+                "Токен успешно сохранён! Теперь вы можете пользоваться ботом.");
+        }
     }
 }

@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection UseYandexService(this IServiceCollection services)
     {
         return services
+            .AddHttpClient()
             .AddScoped<IYandexDiskService, YandexDiskService>();
     }
 
@@ -44,7 +45,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection UseRepositories(this IServiceCollection services) 
     {
         return services
-            .AddSingleton<TgBotDbContext>()
+            .AddDbContext<TgBotDbContext>()
             .AddScoped<IUserRepository, UserRepository>();
     }
 }
