@@ -12,7 +12,7 @@ namespace TgYandexBot.CommandHandlers
         public async Task HandleCommand(ITelegramBotClient client, Update update)
         {
             var msg = update.Message;
-            var fileName = msg.Text.Split()[1];
+            var fileName = msg.Text.Substring(10);
             
             await using Stream stream = await yandexDiskService.DownloadFileAsync($"{fileName}", (int)msg.From.Id);
 

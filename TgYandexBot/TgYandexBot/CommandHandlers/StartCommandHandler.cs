@@ -13,24 +13,35 @@ public class StartCommandHandler : ICommandHandler
 
     public async Task HandleCommand(ITelegramBotClient client, Update update)
     {
-        var msg = update.Message;
-
-        if (msg == null || string.IsNullOrWhiteSpace(msg.Text))
+        if (!IsValidMessage(update, out var message))
         {
-            await client.SendTextMessageAsync(update.Message!.Chat.Id, "Некорректная команда.");
+            await SendInvalidCommandMessage(client, update.Message!.Chat.Id);
             return;
         }
-
-        var splitted = msg.Text.Split(" ");
-        if (splitted.Length < 2)
-        {
-            var clientId = "тут клиент_id";
-            var authUrl = $"https://oauth.yandex.ru/authorize?response_type=code&client_id={clientId}";
-
-            await client.SendTextMessageAsync(msg.Chat.Id,
-                $"Для работы с ботом авторизуйтесь через Яндекс: {authUrl} " +
-                $"После чего введите команду /login и код подтверждения через пробел");
-        }
+        await SendAuthorizationInstructions(client, message.Chat.Id);
     }
+
+    private bool IsValidMessage(Update update, out Message message)
+    {
+        message = update.Message!;
+        return !string.IsNullOrWhiteSpace(message.Text);
+    }
+
+    private async Task SendInvalidCommandMessage(ITelegramBotClient client, long chatId)
+    {
+        const string invalidCommandText = "Некорректная команда.";
+        await client.SendTextMessageAsync(chatId, invalidCommandText);
+    }
+
+    private async Task SendAuthorizationInstructions(ITelegramBotClient client, long chatId)
+    {
+        const string clientId = "d865d50859174d828f62e1844f2bc69e";
+        var authUrl = $"https://oauth.yandex.ru/authorize?response_type=code&client_id={clientId}";
+        var instructions = $"Для работы с ботом авторизуйтесь через Яндекс: {authUrl} " +
+                           "После чего введите команду /login и код подтверждения через пробел";
+
+        await client.SendTextMessageAsync(chatId, instructions);
+    }
+
     
 }
