@@ -7,6 +7,7 @@ public class TgErrorHandler : ITgErrorHandler
 {
     public Task HandleErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

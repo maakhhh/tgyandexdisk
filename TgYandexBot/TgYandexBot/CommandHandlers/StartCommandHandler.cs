@@ -1,14 +1,18 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TgYandexBot.Core.Interfaces;
-using User = TgYandexBot.Core.Models.User;
 
 namespace TgYandexBot.CommandHandlers;
 
 public class StartCommandHandler : ICommandHandler
 {
+    private readonly IConfiguration _configuration;
+    public StartCommandHandler(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     public string GetCommandName() => "/start";
 
     public async Task HandleCommand(ITelegramBotClient client, Update update)
@@ -18,7 +22,7 @@ public class StartCommandHandler : ICommandHandler
             await SendInvalidCommandMessage(client, update.Message!.Chat.Id);
             return;
         }
-        await SendAuthorizationInstructions(client, message.Chat.Id);
+        await SendAuthorizationInstructions(client, message.Chat.Id, _configuration["YandexDiskSettings:ClientId"]);
     }
 
     private bool IsValidMessage(Update update, out Message message)
@@ -30,17 +34,17 @@ public class StartCommandHandler : ICommandHandler
     private async Task SendInvalidCommandMessage(ITelegramBotClient client, long chatId)
     {
         const string invalidCommandText = "Некорректная команда.";
-        await client.SendTextMessageAsync(chatId, invalidCommandText);
+        await client.SendMessage(chatId, invalidCommandText);
     }
 
-    private async Task SendAuthorizationInstructions(ITelegramBotClient client, long chatId)
+    private async Task SendAuthorizationInstructions(ITelegramBotClient client, long chatId, string clientId)
     {
-        const string clientId = "d865d50859174d828f62e1844f2bc69e";
+        //const string clientId = "d865d50859174d828f62e1844f2bc69e";
         var authUrl = $"https://oauth.yandex.ru/authorize?response_type=code&client_id={clientId}";
         var instructions = $"Для работы с ботом авторизуйтесь через Яндекс: {authUrl} " +
                            "После чего введите команду /login и код подтверждения через пробел";
 
-        await client.SendTextMessageAsync(chatId, instructions);
+        await client.SendMessage(chatId, instructions);
     }
 
     

@@ -8,12 +8,13 @@ public static class Program
 {
     public static async Task Main()
     {
+        var configuration = BuildConfiguration();
         var services = new ServiceCollection()
             .UseHandlers()
             .UseCommandHandlers()
-            .UseTelegramService(BuildConfiguration())
+            .UseTelegramService(configuration)
             .UseYandexService()
-            .UseRepositories()
+            .UseRepositories(configuration)
             .BuildServiceProvider();
         var client = services.GetRequiredService<ITelegramBotService>();
         

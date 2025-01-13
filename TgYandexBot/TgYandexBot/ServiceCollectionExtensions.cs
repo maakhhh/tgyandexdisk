@@ -5,6 +5,7 @@ using TgYandexBot.Core.Interfaces;
 using TgYandexBot.TgServices;
 using TgYandexBot.DataBase.Repositories;
 using TgYandexBot.DataBase;
+using Microsoft.EntityFrameworkCore;
 
 namespace TgYandexBot;
 
@@ -42,10 +43,14 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommandHandler, GetAllFilesCommandHandler>()
             .AddSingleton<CommandHandlerProvider>();
     }
-    public static IServiceCollection UseRepositories(this IServiceCollection services) 
+    public static IServiceCollection UseRepositories(this IServiceCollection services, IConfiguration configuration) 
     {
         return services
-            .AddDbContext<TgBotDbContext>()
+            .AddDbContext<TgBotDbContext>(options =>
+            {
+                var test = configuration.GetConnectionString(nameof(TgBotDbContext));
+                options.UseNpgsql(configuration.GetConnectionString(nameof(TgBotDbContext)));
+            })
             .AddScoped<IUserRepository, UserRepository>();
     }
 }

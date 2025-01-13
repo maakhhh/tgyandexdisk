@@ -45,7 +45,7 @@ public class YandexDiskService(IUserRepository userRepository, IConfiguration co
             .Where(item => item.Type == ResourceType.File)
             .Select(item => item.Name);
 
-        return files != null ? string.Join(", ", files) : string.Empty;
+        return files != null ? string.Join("\n", files) : string.Empty;
     }
     
     public async Task<string> ExchangeCodeForTokenAsync(string code)
@@ -56,8 +56,10 @@ public class YandexDiskService(IUserRepository userRepository, IConfiguration co
         
         
         var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
-        httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {credentials}");
-        
+        //httpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {credentials}");
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+
+
         var requestBody = new FormUrlEncodedContent(new[]
         {
             new KeyValuePair<string, string>("grant_type", "authorization_code"),

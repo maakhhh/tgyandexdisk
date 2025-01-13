@@ -3,10 +3,9 @@
 	public class User
 	{
 		public int Id { get; }
-		public string? OAuthToken { get; private set; }
 		public string? AccessToken { get; private set; }
 		public DateTime CreatedAt { get; }
-		public DateTime UpdatedAt { get; }
+		public DateTime UpdatedAt { get; private set; }
 
 		public User(int id)
 		{
@@ -15,14 +14,10 @@
 			UpdatedAt = CreatedAt;
 		}
 
-		public void SetOauthToken(string token)
-		{
-			OAuthToken = token;
-		}
-
 		public void SetAccessToken(string token)
 		{
 			AccessToken = token;
+			UpdatedAt = DateTime.UtcNow;
 		}
 	}
 }

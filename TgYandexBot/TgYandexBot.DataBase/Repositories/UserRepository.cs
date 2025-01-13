@@ -61,7 +61,6 @@ namespace TgYandexBot.DataBase.Repositories
 					.Where(x => x.Id == id)
 					.ExecuteUpdateAsync(s => s
 						.SetProperty(x => x.AccessToken, x => newUser.AccessToken)
-						.SetProperty(x => x.OAuthToken, x => newUser.OAuthToken)
 						.SetProperty(x => x.UpdatedAt, x => DateTime.UtcNow));
 				return Result.Success();
 			}

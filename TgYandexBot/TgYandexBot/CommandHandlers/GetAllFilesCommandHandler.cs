@@ -12,7 +12,7 @@ public class GetAllFilesCommandHandler(IYandexDiskService yandexDiskService) : I
     {
         var message = update.Message;
         var files = await yandexDiskService.GetAllFilesAsync((int)message.From.Id);
-        await client.SendTextMessageAsync(message.Chat.Id,
+        await client.SendMessage(message.Chat.Id,
             $"Вот ваши файлы: {files}");
     }
 }

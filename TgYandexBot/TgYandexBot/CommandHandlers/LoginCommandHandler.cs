@@ -38,7 +38,7 @@ public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskServ
     private async Task SendInvalidCommandMessage(ITelegramBotClient client, long chatId)
     {
         const string invalidCommandText = "Некорректная команда.";
-        await client.SendTextMessageAsync(chatId, invalidCommandText);
+        await client.SendMessage(chatId, invalidCommandText);
     }
 
     private async Task ProcessLogin(ITelegramBotClient client, Message message, string code)
@@ -47,7 +47,7 @@ public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskServ
 
         if (authToken is null)
         {
-            await client.SendTextMessageAsync(message.Chat.Id,
+            await client.SendMessage(message.Chat.Id,
                 "Не удалось получить токен. Проверьте правильность кода подтверждения.");
             return;
         }
@@ -56,7 +56,7 @@ public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskServ
 
         if (!existingUser.IsFailure)
         {
-            await client.SendTextMessageAsync(message.Chat.Id,
+            await client.SendMessage(message.Chat.Id,
                 "Ваш токен уже присутствует в системе, вы можете пользоваться ботом.");
         }
         else
@@ -65,7 +65,7 @@ public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskServ
             newUser.SetAccessToken(authToken);
             await userRepository.Add(newUser);
 
-            await client.SendTextMessageAsync(message.Chat.Id,
+            await client.SendMessage(message.Chat.Id,
                 "Токен успешно сохранён! Теперь вы можете пользоваться ботом.");
         }
     }
