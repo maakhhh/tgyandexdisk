@@ -4,7 +4,7 @@ using TgYandexBot.Core.Interfaces;
 
 namespace TgYandexBot.CommandHandlers
 {
-    public class DownloadCommandHandler(IYandexDiskService yandexDiskService) : ICommandHandler
+    public class DownloadCommandHandler(IFileManagerService fileManagerService) : ICommandHandler
     {
 
          public string GetCommandName() => "/download";
@@ -14,7 +14,7 @@ namespace TgYandexBot.CommandHandlers
             var msg = update.Message;
             var fileName = msg.Text.Substring(10);
             
-            await using Stream stream = await yandexDiskService.DownloadFileAsync($"{fileName}", (int)msg.From.Id);
+            await using Stream stream = await fileManagerService.DownloadFileAsync($"{fileName}", (int)msg.From.Id);
 
             var dir = $"temp/{msg.From.Id.ToString()}/{fileName}";
 

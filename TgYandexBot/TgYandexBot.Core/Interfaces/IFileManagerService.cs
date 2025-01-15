@@ -1,6 +1,6 @@
 ﻿namespace TgYandexBot.Core.Interfaces;
 
-public interface IYandexDiskService
+public interface IFileManagerService
 {
     Task UploadFileAsync(string localPath, string remotePath, int userId);
 
