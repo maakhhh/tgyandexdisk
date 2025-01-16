@@ -8,7 +8,7 @@ using YandexDisk.Client.Protocol;
 
 namespace TgYandexBot.TgServices;
 
-public class YandexDiskService(IUserRepository userRepository, IConfiguration configuration, HttpClient httpClient) : IYandexDiskService
+public class YandexDiskService(IUserRepository userRepository, IConfiguration configuration, HttpClient httpClient) : IFileManagerService
 {
     public async Task UploadFileAsync(string localPath, string remotePath, int userId)
     {

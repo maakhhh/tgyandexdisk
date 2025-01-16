@@ -5,7 +5,7 @@ using User = TgYandexBot.Core.Models.User;
 
 namespace TgYandexBot.CommandHandlers;
 
-public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskService yandexDiskService)
+public class LoginCommandHandler(IUserRepository userRepository, IFileManagerService fileManagerService)
     : ICommandHandler
 {
     public string GetCommandName() => "/login";
@@ -43,7 +43,7 @@ public class LoginCommandHandler(IUserRepository userRepository, IYandexDiskServ
 
     private async Task ProcessLogin(ITelegramBotClient client, Message message, string code)
     {
-        var authToken = await yandexDiskService.ExchangeCodeForTokenAsync(code);
+        var authToken = await fileManagerService.ExchangeCodeForTokenAsync(code);
 
         if (authToken is null)
         {

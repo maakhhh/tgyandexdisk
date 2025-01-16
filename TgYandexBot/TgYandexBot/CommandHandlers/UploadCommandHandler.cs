@@ -4,7 +4,7 @@ using TgYandexBot.Core.Interfaces;
 
 namespace TgYandexBot.CommandHandlers
 {
-    public class UploadCommandHandler(IYandexDiskService yandexDiskService) : ICommandHandler
+    public class UploadCommandHandler(IFileManagerService fileManagerService) : ICommandHandler
     {
         public string GetCommandName() => "/upload";
 
@@ -33,7 +33,7 @@ namespace TgYandexBot.CommandHandlers
             fs.Close();
 
             var currentDir = $"/{doc.FileName}";
-            await yandexDiskService.UploadFileAsync(localPath, currentDir, (int)msg.From.Id);
+            await fileManagerService.UploadFileAsync(localPath, currentDir, (int)msg.From.Id);
 
             System.IO.File.Delete(tempDestination);
             //Яндекс
