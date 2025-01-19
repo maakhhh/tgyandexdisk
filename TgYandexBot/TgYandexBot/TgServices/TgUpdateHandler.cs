@@ -17,22 +17,21 @@ public class TgUpdateHandler : ITgUpdateHandler
     
     public async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken cancellationToken)
     {
-        if (update.Type != UpdateType.Message)
+        if (update.Type is not (UpdateType.Message or UpdateType.CallbackQuery))
             return;
-        
-        var message = update.Message;
-        var command = string.Empty;
-
-        switch (message.Type)
+    
+        var command = update.Type switch
         {
-            case MessageType.Text:
-                command = message.EntityValues.First();
-                break;
-            case MessageType.Document:
-                command = message.Caption;
-                break;
-        }
-        
+            UpdateType.Message => GetCommandFromMessage(update),
+            UpdateType.CallbackQuery => GetCommandFromCallbackQuery(update),
+        };
+
+        var message = update.Type switch
+        {
+            UpdateType.Message => update.Message,
+            UpdateType.CallbackQuery => update.CallbackQuery!.Message,
+        };
+
         var commandHandler = commandProvider.GetCommandHandler(command);
         
         if (commandHandler.HaveValue)
@@ -41,8 +40,31 @@ public class TgUpdateHandler : ITgUpdateHandler
         {
             await client.SendMessage(
                 chatId: message.Chat.Id,
-                text: message.Text,
+                text: "Для получения списка доступных команд используйте команду /help",
                 cancellationToken: cancellationToken);
         }
+    }
+
+    private string GetCommandFromMessage(Update update)
+    {
+        if (update.Type != UpdateType.Message)
+            throw new ArgumentException();
+        
+        var message = update.Message;
+
+        return message.Type switch
+        {
+            MessageType.Text => message.EntityValues?.First() ?? message.Text,
+            MessageType.Document => "/upload",
+            _ => string.Empty
+        };
+    }
+
+    private string GetCommandFromCallbackQuery(Update update)
+    {
+        if (update.Type != UpdateType.CallbackQuery)
+            throw new ArgumentException();
+        
+        return update.CallbackQuery!.Data!.Split()[0];
     }
 }

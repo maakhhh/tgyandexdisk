@@ -25,7 +25,7 @@ namespace TgYandexBot.CommandHandlers
 
             await using FileStream fileToSend = System.IO.File.OpenRead(dir);
 
-            var botMsg = await client.SendDocument(msg.Chat.Id, InputFile.FromStream(fileToSend), "Вот ваш файл:");
+            await client.SendDocument(msg.Chat.Id, InputFile.FromStream(fileToSend), "Вот ваш файл:");
 
             fileToSend.Close();
             System.IO.File.Delete(dir);

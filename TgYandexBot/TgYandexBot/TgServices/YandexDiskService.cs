@@ -31,7 +31,7 @@ public class YandexDiskService(IUserRepository userRepository, IConfiguration co
         return response;
     }
 
-    public async Task<string> GetAllFilesAsync(int userId)
+    public async Task<IEnumerable<string>> GetAllFilesAsync(int userId)
     {
         var user = await userRepository.GetById(userId);
         var token = user.Value.AccessToken;
@@ -45,7 +45,7 @@ public class YandexDiskService(IUserRepository userRepository, IConfiguration co
             .Where(item => item.Type == ResourceType.File)
             .Select(item => item.Name);
 
-        return files != null ? string.Join("\n", files) : string.Empty;
+        return files;
     }
     
     public async Task<string> ExchangeCodeForTokenAsync(string code)

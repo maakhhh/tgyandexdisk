@@ -36,6 +36,7 @@ namespace TgYandexBot.CommandHandlers
             await fileManagerService.UploadFileAsync(localPath, currentDir, (int)msg.From.Id);
 
             System.IO.File.Delete(tempDestination);
+            await client.SendMessage(update.Message.Chat.Id, "Файл успешно загружен!");
             //Яндекс
         }
     }

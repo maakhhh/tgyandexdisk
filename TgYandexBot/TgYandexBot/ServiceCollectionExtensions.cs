@@ -41,6 +41,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommandHandler, DownloadCommandHandler>()
             .AddSingleton<ICommandHandler, LoginCommandHandler>()
             .AddSingleton<ICommandHandler, GetAllFilesCommandHandler>()
+            .AddSingleton<ICommandHandler, HelpCommandHandler>()
+            .AddSingleton<ICommandHandler, CallbackDownloadCommandHandler>()
             .AddSingleton<CommandHandlerProvider>();
     }
     public static IServiceCollection UseRepositories(this IServiceCollection services, IConfiguration configuration) 

@@ -41,8 +41,11 @@ public class StartCommandHandler : ICommandHandler
     {
         //const string clientId = "d865d50859174d828f62e1844f2bc69e";
         var authUrl = $"https://oauth.yandex.ru/authorize?response_type=code&client_id={clientId}";
-        var instructions = $"Для работы с ботом авторизуйтесь через Яндекс: {authUrl} " +
-                           "После чего введите команду /login и код подтверждения через пробел";
+        var instructions = $"Для работы с ботом авторизуйтесь через Яндекс по ссылке ниже:\n\n" +
+                           $"{authUrl}\n\n" +
+                           "После чего введите команду /login и код подтверждения через пробел\n" +
+                           "Например /login мойтокен222\n" +
+                           "Список всех команд - /help";
 
         await client.SendMessage(chatId, instructions);
     }

@@ -9,10 +9,10 @@ namespace TgYandexBot.DataBase
     {
         public DbSet<User> Users { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseNpgsql("Host=localhost;Port=54322;Username=postgres;Password=postgres;Database=TgYandex");
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=95702314;Database=TgYandex");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,7 @@ namespace TgYandexBot.DataBase
         public TgBotDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<TgBotDbContext>();
-            optionsBuilder.UseNpgsql("User ID = postgres; Password = postgres; host = localhost; port = 54322; Database = TgYandex;");
+            optionsBuilder.UseNpgsql("User ID = postgres; Password = 95702314; host = localhost; port = 5432; Database = TgYandex;");
 
             return new TgBotDbContext(optionsBuilder.Options);
         }
